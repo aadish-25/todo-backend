@@ -1,0 +1,35 @@
+### Get all todos
+GET http://localhost:5000/todos
+Content-Type: application/json
+
+###
+
+### Create a new todo
+POST http://localhost:5000/todos
+Content-Type: application/json
+
+{
+  "name": "Authentication",
+  "title": "Learn authentication",
+  "content" : "Use bcrypt and jwt",
+  "isCompleted": false
+}
+
+###
+
+### Update a todo
+PATCH http://localhost:5000/todos/xxxxxxxxxxxxxxxxxxxxxxxx
+Content-Type: application/json
+
+{
+  "name": "!Authentication",
+  "title": "Do not learn authentication",
+  "content" : "Never use bcrypt and jwt",
+  "isCompleted": true
+}
+
+###
+
+### Delete a todo
+DELETE http://localhost:5000/todos/xxxxxxxxxxxxxxxxxxxxxxxx
+Content-Type: application/json
