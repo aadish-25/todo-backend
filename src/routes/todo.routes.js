@@ -3,11 +3,15 @@ import { Todo } from "../models/todo.models.js";
 
 const router = Router();
 
-// display all todos
+// ============================
+// GET all todos
+// ============================
 router.route("/").get(async function (req, res) {
   try {
     const allTodos = await Todo.find();
-    res.json(
+    
+    // Map todos and send as JSON with status 200
+    res.status(200).json(
       allTodos.map((todo) => ({
         id: todo._id,
         name: todo.name,
@@ -16,55 +20,76 @@ router.route("/").get(async function (req, res) {
         isCompleted: todo.isCompleted,
       }))
     );
-    
-    res.status(200)
-  } catch (error) {}
+  } catch (error) {
+    // Send error response if DB query fails
+    console.error("Error fetching todos:", error);
+    res.status(500).json({ error: "Failed to fetch todos" });
+  }
 });
 
-// create a todo
+// ============================
+// POST create a todo
+// ============================
 router.route("/").post(async function (req, res) {
-  const { name, title, content } = req.body;
-  await Todo.create({
-    name,
-    title,
-    content,
-  });
-  res.status(201).json({ message: "received", data: req.body });
+  try {
+    const { name, title, content } = req.body;
+
+    // Create a new Todo in the database
+    const newTodo = await Todo.create({ name, title, content });
+
+    // Send response with created todo
+    res.status(201).json({ message: "Todo created", data: newTodo });
+  } catch (error) {
+    console.error("Error creating todo:", error);
+    res.status(400).json({ error: "Failed to create todo" });
+  }
 });
 
-// update a todo
+// ============================
+// PATCH update a todo
+// ============================
 router.route("/:id").patch(async function (req, res) {
   try {
     const idToUpdate = req.params.id;
     const updatedTitle = req.body.newTitle;
 
+    // Find todo by ID
     const findTodo = await Todo.findById(idToUpdate);
-    if (!findTodo) return res.status(404).json({ message: "Todo not found" });
+    if (!findTodo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
 
+    // Update title and save
     findTodo.title = updatedTitle;
     await findTodo.save();
 
-    res.status(201).json({"updated": true})
+    res.status(200).json({ updated: true });
   } catch (error) {
-    console.log("Error in updating todo");
-    res.status(400).json({"updated": false})
+    console.error("Error updating todo:", error);
+    res.status(400).json({ updated: false });
   }
 });
 
-// delete a todo
+// ============================
+// DELETE a todo
+// ============================
 router.route("/:id").delete(async function (req, res) {
-    try {
+  try {
     const idToDelete = req.params.id;
 
+    // Find todo by ID
     const findTodo = await Todo.findById(idToDelete);
-    if (!findTodo) return res.status(404).json({ message: "Todo not found" });
+    if (!findTodo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
 
-    await Todo.findByIdAndDelete(idToDelete)
+    // Delete todo
+    await Todo.findByIdAndDelete(idToDelete);
 
-    res.status(201).json({"deleted": true})
+    res.status(200).json({ deleted: true });
   } catch (error) {
-    console.log("Error in updating todo : ", error);
-    res.status(400).json({"deleted": false})
+    console.error("Error deleting todo:", error);
+    res.status(400).json({ deleted: false });
   }
 });
 
