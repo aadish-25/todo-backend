@@ -37,6 +37,12 @@ router.route("/").post(async function (req, res) {
     // Create a new Todo in the database
     const newTodo = await Todo.create({ name, title, content });
 
+    // ----------------------
+    // Method 2 :
+    // const todo = new Todo({ name: name.toUpperCase(), title, content }); 
+    // const newTodo = await todo.save();
+    // ----------------------
+
     // Send response with created todo
     res.status(201).json({ message: "Todo created", data: newTodo });
   } catch (error) {
@@ -61,7 +67,7 @@ router.route("/:id").patch(async function (req, res) {
 
     // Update title and save
     findTodo.title = updatedTitle;
-    await findTodo.save();
+    const updatedTodo = await findTodo.save();
 
     res.status(200).json({ updated: true });
   } catch (error) {
