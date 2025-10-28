@@ -1,10 +1,12 @@
 import express from "express"
+import cors from "cors"
 import dotenv from "dotenv"
-import {Todo} from "./src/models/todo.models.js"
+import { Todo } from "./src/models/todo.models.js"
 const app = express()
 
 dotenv.config({ path: './.env' })
 
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded())
 
